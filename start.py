@@ -16,4 +16,4 @@ async def on_message(message):
         await message.channel.send('ขำมากมั้ง')
     elif message.content == '!welcome':
         await message.channel.send('Hello' + " " + str(message.author))
-client.run("MTE1MDAzNTM4NjkwMzU3NjYwNg.G9pYo6.cmlCzzSeTVprYvwIl-UrRi3RML2A2Np-ny9ZUk")
+client.run("Token here")
