@@ -43,4 +43,4 @@ async def play_error(ctx, error):
         await ctx.send("Please provide a song name with the command. For example: `!play [song name]`")
 
 # Replace 'YOUR_TOKEN_HERE' with your bot token
-bot.run('MTE1NjU1MTQ3NzUwNzEzMzQ3MA.G7pzCu.Z5l08U4A2SBRAgIZbrdKwNqB21U58CvfNPqTlo')
+bot.run('Token')
