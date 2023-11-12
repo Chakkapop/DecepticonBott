@@ -11,7 +11,7 @@ timers = {}  # ใช้เก็บตัวจับเวลาแต่ล�
 async def on_ready():
     print("Bot is ready!")
 
-#music
+
 @bot.command()
 async def play(ctx, *, song):
     if ctx.author.voice is None:
@@ -19,10 +19,10 @@ async def play(ctx, *, song):
         return
 
     voice_channel = ctx.author.voice.channel
-    if ctx.voice_bot is None:
+    if ctx.voice_client is None:
         vc = await voice_channel.connect()
     else:
-        vc = ctx.voice_bot
+        vc = ctx.voice_client
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -40,15 +40,31 @@ async def play(ctx, *, song):
     vc.stop()
     vc.play(discord.FFmpegPCMAudio(executable="ffmpeg", source=url))
 
-@play.error
-async def play_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please provide a song name with the command. For example: `!play [song name]`")
+@bot.command()
+async def skip(ctx):
+    if not ctx.voice_client:
+        await ctx.send("The bot is not in a voice channel.")
+        return
 
-#league of legends !counterpick
-def get_counterpicknet_counterpicks(champion): #counterstats
+    ctx.voice_client.stop()
+    await ctx.send("The current song has been skipped.")
+
+
+@bot.command()
+async def disconnect(ctx):
+    if not ctx.voice_client:
+        await ctx.send("The bot is not in a voice channel.")
+        return
+
+    if ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+
+    await ctx.voice_client.disconnect()
+    await ctx.send("The bot has been disconnected from the voice channel.")
+
+def get_counterpicknet_counterpicks(champion):#league of legends  Ex:!counterpick champion opgg
     return f"https://www.counterstats.net/league-of-legends/{champion}"
-def get_opgg_counterpicks(champion): #op.gg
+def get_opgg_counterpicks(champion):
     return f"https://www.op.gg/champions/{champion}/counters"
 
 @bot.command(name="counterpick", aliases=["cp"])
@@ -71,12 +87,8 @@ async def counterpick(ctx, champion: str, website: str = "opgg"):
 
 #main code
 @bot.event
-async def on_ready():
-    print(f'Logged in as {bot.user.name}')
-
-
-@bot.event
 async def on_message(message):
+    await bot.process_commands(message)
     if message.author == bot.user:
         return
 
