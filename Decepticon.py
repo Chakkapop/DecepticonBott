@@ -92,12 +92,12 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content.startswith('!set_timer'):
+    if message.content.startswith('!set_work'):
         try:
             parameters = message.content.split(' ')
             print(parameters)
             if len(parameters) != 3:
-                await message.channel.send("โปรดระบุเวลาให้ถูกต้อง (เช่น !set_timer 60)")
+                await message.channel.send("โปรดระบุเวลาให้ถูกต้อง (เดือน/วัน ชื่องาน)")
                 return
 
             time_interval = parameters[1]
@@ -105,20 +105,18 @@ async def on_message(message):
             strtime = ' '.join(time_interval)
             strtime = strtime.replace('/', '')
             if len(time_interval) <= 0:
-                await message.channel.send("โปรดระบุเวลาให้มากกว่า 0")
+                await message.channel.send("โปรดระบุเวลาให้ถูกต้อง (เดือน/วัน ชื่องาน)")
                 return
 
             user = message.author
 
-            if user.id in timers:
-                await message.channel.send("คุณมีตัวจับเวลาที่กำลังทำงานอยู่แล้ว")
-            else:
-                timers[user.id] = asyncio.create_task(
-                    start_timer(user, time_interval, name))
-                await message.channel.send("ตั้งเวลาสำเร็จ! จะแจ้งเตือนคุณก่อนกำหนดงาน 1 วัน")
+            timers[user.id] = asyncio.create_task(
+                start_timer(user, time_interval, name))
+            await message.channel.send("ตั้งเวลาสำเร็จ! จะแจ้งเตือนคุณก่อนกำหนดงาน 1 วัน")
         except ValueError:
             print(time_interval)
-            await message.channel.send("โปรดระบุเวลาที่ถูกต้อง")
+            await message.channel.send("โปรดระบุเวลาให้ถูกต้อง (เดือน/วัน ชื่องาน)")
+
 
 async def start_timer(user, time_interval, name):
     print(name)
@@ -136,9 +134,9 @@ async def start_timer(user, time_interval, name):
     text2 = use+name+' เหลือเวลาอีก 1 วัน' + ':calendar_spiral: '
     del timers[user.id]
     if int(date) + 1 == int(strtime):
-        await user.guild.text_channels[4].send(text2)
-    elif int(date) == int(strtime):
-        await user.guild.text_channels[4].send(text)
+        await user.guild.text_channels[1].send(text2)
+    if int(date) == int(strtime):
+        await user.guild.text_channels[1].send(text)
 
 # Replace 'Token' with your bot token
 bot.run('Token')
